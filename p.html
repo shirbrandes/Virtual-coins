@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="p.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<head>
+</head>
+
+
+<body>
+
+    <div class="topdiv">
+
+        <div class="btndiv">
+            <button class="Coinsbtn">Coins</button>
+            <button class="Aboutbtn">About</button>
+        </div>
+
+        <div class="h1">
+            <h1>The world of virtual commerce</h1>
+        </div>
+
+        <div class="input">
+            <input class="inputSearch" type="text">
+            <button class="btnSearch">Search</button>
+            <button class="btnShowAll">Show all coins</button>
+        </div>
+
+    </div>
+
+    <div class="container">
+
+    </div>
+
+
+    <script>
+        let containerDiv = document.querySelector(".container");
+        let buttonCoins = document.querySelector(".Coinsbtn");
+        let buttonAbout = document.querySelector(".Aboutbtn");
+        let buttonSearch = document.querySelector(".btnSearch")
+        let buttonShowAll = document.querySelector(".btnShowAll");
+
+        let coinsDiv = document.createElement("div");
+        coinsDiv.setAttribute("class", "container")
+        let divAbout = document.createElement("div");
+
+        let moneAbout = 0;
+
+        let arr = [];
+        let errDiv = document.createElement("div");
+
+        let gif = document.createElement("img");
+        gif.src = "photos/gif.gif";
+        gif.setAttribute("class", "gif")
+
+        showCoins();
+        about();
+
+        buttonSearch.addEventListener("click", findFromInput);
+        buttonShowAll.addEventListener("click", showAll);
+        buttonAbout.addEventListener("click", moveToAbout);
+        buttonCoins.addEventListener("click", moveToCoins);
+
+        function moveToAbout() {
+            containerDiv.innerHTML = "";
+            containerDiv.appendChild(divAbout);
+        }
+
+        function moveToCoins() {
+            containerDiv.innerHTML = "";
+            containerDiv.appendChild(coinsDiv);
+        }
+
+        function about() {
+            if (moneAbout == 0) {
+                divAbout.setAttribute("class", "divAbout");
+                document.querySelector(".topdiv").style.minHeight = "200px";
+
+                let textAbout = document.createElement("div");
+                textAbout.setAttribute("class", "textAbout");
+
+                // let h1 = document.createElement("h1");
+                // h1.innerHTML = "About:"
+                // h1.setAttribute("class", "headlineAbout")
+
+                let name = document.createElement("h1");
+                name.innerHTML = "Name: Shir Brandes";
+
+                let age = document.createElement("h1");
+                age.innerHTML = "Age: 22";
+
+                let course = document.createElement("h1");
+                course.innerHTML = "Course: Full Stack Web Developer";
+
+                let project = document.createElement("h1");
+                project.innerHTML = "Project: jQuery-AJAX API"
+
+                let imgDiv = document.createElement("div");
+                imgDiv.setAttribute("class", "imgDiv");
+
+                let img = document.createElement("img");
+                img.setAttribute("class", "MyPhoto")
+                img.src = "photos/MyPhoto.jfif"
+
+                textAbout.appendChild(name);
+                textAbout.appendChild(age);
+                textAbout.appendChild(course);
+                textAbout.appendChild(project);
+
+                imgDiv.appendChild(img);
+
+                divAbout.appendChild(textAbout);
+                divAbout.appendChild(imgDiv);
+
+                containerDiv.innerHTML = "";
+            }
+            moneAbout++;
+        }
+
+        function findFromInput() {
+            let cards = document.querySelectorAll(".newDiv");
+            let input = document.querySelector(".inputSearch").value;
+            for (let i = 0; i < cards.length; i++) {
+                if (cards[i].id != input) {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+
+        function showAll() {
+            let input = document.querySelector(".inputSearch").value = "";
+            let cards = document.querySelectorAll(".newDiv");
+            for (let i = 0; i < cards.length; i++) {
+                cards[i].style.display = "flex";
+            }
+        }
+
+        function load() {
+            document.body.appendChild(gif);
+        }
+
+        function removeLoad() {
+            document.body.removeChild(gif);
+        }
+
+        function showCoins() {
+            load();
+            fetch(`https://api.coingecko.com/api/v3/coins/list`)
+                .then(res => res.json())
+                .then(arrcoins => {
+                    for (let i = 0; i < 20; i++) {
+                        // console.log(arrcoins[i]);
+                        let newDiv = document.createElement("div");
+                        newDiv.setAttribute("class", "newDiv");
+
+                        newDiv.id = arrcoins[i].symbol;
+
+                        let h1 = document.createElement("h1");
+                        h1.innerHTML = "<br>" + arrcoins[i].symbol;
+
+                        let name = document.createElement("p");
+                        name.innerHTML = arrcoins[i].name;
+
+                        let btn = document.createElement("button");
+                        btn.innerHTML = "More Info";
+                        btn.id = arrcoins[i].id;
+                        btn.setAttribute("class", "btnmoreinfo");
+                        btn.addEventListener("click", moreinfo);
+
+                        let containor = document.createElement("div");
+                        let toggle = document.createElement("div");
+                        let circle = document.createElement("div");
+                        containor.setAttribute("class", "containor");
+                        toggle.setAttribute("class", "toggle");
+                        circle.setAttribute("class", "circle");
+                        toggle.addEventListener("click", toggleF);
+
+                        toggle.appendChild(circle);
+                        containor.appendChild(toggle);
+
+                        newDiv.appendChild(containor);
+                        newDiv.appendChild(h1);
+                        newDiv.appendChild(name);
+                        newDiv.appendChild(btn);
+                        coinsDiv.appendChild(newDiv);
+                    }
+                    containerDiv.appendChild(coinsDiv);
+                    removeLoad();
+                })
+        }
+
+        function createInfo(info, newDiv) {
+            let img = document.createElement("img");
+            img.src = info.img;
+
+            let priced = document.createElement("p");
+            priced.innerHTML = "Price in dollars: " + info.usd + "$" + "<br>";
+
+            let prices = document.createElement("p");
+            prices.innerHTML = "Price in shekels: " + info.usd + "₪" + "<br>";
+
+            let pricee = document.createElement("p");
+            pricee.innerHTML = "Price in eurs: " + info.eur + "€" + "<br>";
+
+            let divInfo = document.createElement("div");
+            divInfo.setAttribute("class", "divInfo");
+
+            newDiv.appendChild(divInfo);
+            divInfo.appendChild(priced);
+            divInfo.appendChild(prices);
+            divInfo.appendChild(pricee);
+            divInfo.appendChild(img);
+
+            removeLoad();
+        }
+
+        function moreinfo(e) {
+            let newDiv = e.target.parentElement;
+            let btn = e.target;
+            let time = new Date().getTime();
+
+            if (btn.innerHTML == "More Info") {
+                load();
+                if (localStorage.getItem(e.target.id) && (time - JSON.parse(localStorage.getItem(e.target.id)).time) < 120000) {
+                    let local = JSON.parse(localStorage.getItem(e.target.id));
+                    createInfo(local, newDiv);
+                }
+                else {
+                    fetch(`https://api.coingecko.com/api/v3/coins/${e.target.id}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            // console.log(data);
+                            let info = {
+                                img: data.image.small,
+                                usd: data.market_data.current_price.usd,
+                                ils: data.market_data.current_price.ils,
+                                eur: data.market_data.current_price.eur,
+                                time: new Date().getTime()
+                            }
+                            localStorage.setItem(e.target.id, JSON.stringify(info));
+                            createInfo(info, newDiv);
+                        })
+                }
+                btn.innerHTML = "Hide Info";
+            }
+            else {
+                let newDivE = e.target.parentElement;
+                let divInfoE = e.target.nextElementSibling;
+                newDivE.removeChild(divInfoE);
+                btn.innerHTML = "More Info";
+            }
+        }
+
+        function toggleF(e) {
+            let toggle;
+            if (e.target.classList.contains("toggle")) {
+                toggle = e.target;
+            } else {
+                toggle = e.target.parentElement;
+            }
+
+            toggle.classList.toggle('active');
+            let card = toggle.parentElement.parentElement.id;
+
+            if (toggle.classList.contains("active")) {
+                if (arr.length < 5)
+                    arr.push(card)
+                else {
+                    toggle.classList.toggle('active');
+                    errDivF(card);
+                }
+            }
+            else {
+                let index = arr.findIndex((c) => c == card);
+                arr.splice(index, 1);
+            }
+        }
+
+        function errDivF(card) {
+            errDiv.innerHTML = "";
+            errDiv.setAttribute("class", "errDiv")
+            let h1 = document.createElement("h1");
+            h1.innerHTML = "Which coin do you want to remove?"
+            errDiv.appendChild(h1);
+            let btns = document.createElement("div");
+
+            let btnSave = document.createElement("button");
+            btnSave.innerHTML = "Save";
+            btnSave.setAttribute("class", "btnSaveCanel")
+
+            let btnCancel = document.createElement("button");
+            btnCancel.innerHTML = "Cancel";
+            btnCancel.setAttribute("class", "btnSaveCanel")
+
+            for (let i = 0; i < arr.length; i++) {
+
+                let pdiv = document.createElement("div");
+                let p = document.createElement("p");
+                p.innerHTML = arr[i];
+                let btn = document.createElement("button");
+                btn.innerHTML = "X";
+                btn.setAttribute("class", "btnX")
+                btn.addEventListener("click", deleteFromErr);
+
+                pdiv.appendChild(p);
+                pdiv.appendChild(p);
+                pdiv.appendChild(btn);
+                pdiv.setAttribute("class", "pdiv");
+                errDiv.appendChild(pdiv);
+            }
+            btns.setAttribute("class", "btns")
+            btns.appendChild(btnSave);
+            btns.appendChild(btnCancel);
+            errDiv.appendChild(btns);
+
+            btnSave.onclick = () => {
+                document.body.removeChild(errDiv);
+                if (arr.length < 5) {
+                    arr.push(card);
+                    let toggle = document.getElementById(card).querySelector(".toggle");
+                    toggle.classList.toggle('active');
+                }
+            }
+            document.body.appendChild(errDiv);
+
+            btnCancel.onclick = () => {
+                document.body.removeChild(errDiv);
+            }
+        }
+
+        function deleteFromErr(e) {
+            errDiv.removeChild(e.target.parentElement);
+            let pInner = e.target.previousSibling.innerHTML;
+            let index = arr.findIndex((c) => c == pInner);
+            arr.splice(index, 1);
+            console.log(arr);
+            let toggle = document.getElementById(e.target.previousSibling.innerHTML).querySelector(".toggle");
+            toggle.classList.toggle('active');
+        }
+    </script>
+</body>
+
+</html>
